@@ -34,6 +34,8 @@
         const obj = { id: this.id, value: this.num + 1 }
         // 要做的事情：通过 EventBus 把 obj 对象，发送给 App.vue 组件
         bus.$emit('share', obj)
+
+        this.$emit('num-change', this.num + 1)
       },
       sub() {
         if (this.num - 1 === 0) return

@@ -4,7 +4,9 @@
     <Header title="购物车案例"></Header>
     <h1>App 根组件</h1>
     <!-- 循环渲染每一个商品的信息 -->
-    <Goods v-for="item in list" :key="item.id" :title="item.goods_name" :pic="item.goods_img" :state="item.goods_state" :id="item.id" :count="item.goods_count" @state-change="getNewState"></Goods>
+    <Goods v-for="item in list" :key="item.id" :title="item.goods_name" :pic="item.goods_img" :state="item.goods_state" :id="item.id" :count="item.goods_count" @state-change="getNewState">
+      <Counter :num="item.goods_count" @num-change="getNewNum(item. $event)"></Counter>
+    </Goods>
     <!-- Footer区域 -->
     <!-- 编码规范：先指令，再绑定，再事件 -->
     <Footer :isfull="fullState" :amount="amt" :all="total" @full-change="getFullState"></Footer>
@@ -20,6 +22,7 @@ import Goods from "./components/Goods/Goods.vue";
 import Footer from "./components/Footer/Footer.vue"
 
 import bus from './components/eventBus.js'
+import Counter from './components/Counter/Counter.vue';
 
 export default {
   data() {
@@ -42,6 +45,10 @@ export default {
       this.list.filter(item => item.goods_state).reduce((total, item) => {
         total += item.goods_price * item.goods_count
       }, 0)
+    },
+      // 已勾选商品的总数量
+    total() {
+      return this.list.filter(item => item.goods_state).reduce((t, item) => (t += item.goods_count), 0)
     }
   },
 
@@ -79,12 +86,17 @@ export default {
     getFullState(val) {
       console.log('在App中拿到了全选的状态');
       this.list.forEach(item => (item.goods_state = val))
+    },
+    // 获取 Counter 组件发过来的最新的数量值
+    getNewNum(item, e) {
+      item.goods_count = e
     }
   },
   components: {
     Header,
     Goods,
-    Footer
+    Footer,
+    Counter
   }
   
 }
